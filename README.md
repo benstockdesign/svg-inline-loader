@@ -1,11 +1,11 @@
 <div align="center">
   <a href="https://github.com/webpack/webpack">
-    <img width="200" height="200" vspace="" hspace="25"
-      src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon.svg">
+    <img width="200" height="200" vspace="" hspace="25" src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon.svg">
   </a>
-  <h1>SVG Inline Loader for Webpack</h1>
-  <p>This Webpack loader inlines SVG as module. If you use Adobe suite or Sketch to export SVGs, you will get auto-generated, unneeded crusts. This loader removes it for you, too.<p>
 </div>
+
+# SVG Inline Loader for Webpack
+A modified version of the [official Webpack loader](https://github.com/webpack-contrib/svg-inline-loader) that inlines SVG as module.
 
 ## Installation
 
