@@ -47,18 +47,25 @@ Simply add configuration object to `module.loaders` like this.
 - #### `warningAttributes`: `[...string]` (default: `[]`)  
   An array containing the names of attributes to emit warnings for when encountered on children of the root `<svg>` element.  
   
-## Example Usage
+## Usage
 
+### Default Hashed Prefix
 ```js
 // Using default hashed prefix (__[hash:base64:7]__)
 var logoTwo = require('svg-inline-loader?classPrefix!./logo_two.svg');
-
+```
+### Custom Class Prefix
+```js
 // Using custom string
 var logoOne = require('svg-inline-loader?classPrefix=my-prefix-!./logo_one.svg');
+```
 
+### Custom Class Prefix and Hash
+```js
 // Using custom string and hash
 var logoThree = require('svg-inline-loader?classPrefix=__prefix-[sha512:hash:hex:5]__!./logo_three.svg');
 ```
+
 See [loader-utils](https://github.com/webpack/loader-utils#interpolatename) for hash options.
 
 Preferred usage is via a `module.loaders`:
