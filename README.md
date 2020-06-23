@@ -1,11 +1,4 @@
-[![npm][npm]][npm-url]
-[![deps][deps]][deps-url]
-[![test][test]][test-url]
-[![coverage][cover]][cover-url]
-[![chat][chat]][chat-url]
-
 <div align="center">
-  <!-- replace with accurate logo e.g from https://worldvectorlogo.com/ -->
   <a href="https://github.com/webpack/webpack">
     <img width="200" height="200" vspace="" hspace="25"
       src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon.svg">
@@ -14,13 +7,13 @@
   <p>This Webpack loader inlines SVG as module. If you use Adobe suite or Sketch to export SVGs, you will get auto-generated, unneeded crusts. This loader removes it for you, too.<p>
 </div>
 
-<h2 align="center">Install</h2>
+## Installation
 
 ```bash
 npm install svg-inline-loader --save-dev
 ```
 
-<h2 align="center">Configuration</h2>
+## Configuration
 
 Simply add configuration object to `module.loaders` like this.
 
@@ -31,58 +24,30 @@ Simply add configuration object to `module.loaders` like this.
     }
 ```
 
-warning: You should configure this loader only once via `module.loaders` or `require('!...')`. See [#15](https://github.com/webpack-contrib/svg-inline-loader/issues/15) for detail.
+### Options
 
-<h2 align="center">Query Options</h2>
-
-#### `removeTags: boolean`
-
-Removes specified tags and its children. You can specify tags by setting `removingTags` query array.
-
-default: `removeTags: false`
-
-#### `removingTags: [...string]`
-
-warning: this won't work unless you specify `removeTags: true`
-
-default: `removingTags: ['title', 'desc', 'defs', 'style']`
-
-#### `warnTags: [...string]`
-
-warns about tags, ex: ['desc', 'defs', 'style']
-
-default: `warnTags: []`
-
-#### `removeSVGTagAttrs: boolean`
-
-Removes `width` and `height` attributes from `<svg />`.
-
-default: `removeSVGTagAttrs: true`
-
-#### `removingTagAttrs: [...string]`
-
-Removes attributes from inside the `<svg />`.
-
-default: `removingTagAttrs: []`
-
-#### `warnTagAttrs: [...string]`
-
-Warns to console about attributes from inside the `<svg />`.
-
-default: `warnTagAttrs: []`
-#### `classPrefix: boolean || string`
-
-Adds a prefix to class names to avoid collision across svg files.
-
-default: `classPrefix: false`
-
-#### `idPrefix: boolean || string`
-
-Adds a prefix to ids to avoid collision across svg files.
-
-default: `idPrefix: false`
-
-<h2 align="center">Example Usage</h2>
+- #### `classPrefix`: `string|null` (default: `null`)  
+  A prefix to apply to class names to avoid name collisions between SVG files.  
+  
+- #### `idPrefix`: `string|null` (default: `null`)  
+  A prefix to apply to IDs to avoid name collisions between SVG files.  
+  
+- #### `removedTags`: `[...string]` (default: `[]`)  
+  An array of tags that should be removed from the resulting SVG.  
+  
+- #### `removeRootSVGAttributes`: `boolean` (default: `true`)  
+  A Boolean value indicating whether the `width` and `height` attributes should be removed from the resulting `<svg>` element.  
+  
+- #### `removedAttributes`: `[...string]` (default: `[]`)  
+  An array containing the names of attributes to remove from elements found within the root `<svg>` element.  
+  
+- #### `warningTags`: `[...string]` (default: `[]`)  
+  An array of tags for which warnings should be output to the console, e.g., `['desc', 'defs', 'style']`.  
+  
+- #### `warningAttributes`: `[...string]` (default: `[]`)  
+  An array containing the names of attributes to emit warnings for when encountered on children of the root `<svg>` element.  
+  
+## Example Usage
 
 ```js
 // Using default hashed prefix (__[hash:base64:7]__)
@@ -103,39 +68,6 @@ Preferred usage is via a `module.loaders`:
         loader: 'svg-inline-loader?classPrefix'
     }
 ```
-
-<h2 align="center">Maintainers</h2>
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars3.githubusercontent.com/u/166921?v=3&s=150">
-        </br>
-        <a href="https://github.com/bebraw">Juho Vepsäläinen</a>
-      </td>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars2.githubusercontent.com/u/8420490?v=3&s=150">
-        </br>
-        <a href="https://github.com/d3viant0ne">Joshua Wiens</a>
-      </td>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars3.githubusercontent.com/u/533616?v=3&s=150">
-        </br>
-        <a href="https://github.com/SpaceK33z">Kees Kluskens</a>
-      </td>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars3.githubusercontent.com/u/3408176?v=3&s=150">
-        </br>
-        <a href="https://github.com/TheLarkInn">Sean Larkin</a>
-      </td>
-    </tr>
-  <tbody>
-</table>
 
 [npm]: https://img.shields.io/npm/v/svg-inline-loader.svg
 [npm-url]: https://npmjs.com/package/svg-inline-loader
