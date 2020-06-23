@@ -4,8 +4,8 @@
   </a>
 </div>
 
-# SVG Inline Loader for Webpack
-A modified version of the [official Webpack loader](https://github.com/webpack-contrib/svg-inline-loader) that inlines SVG as module.
+# SVG Inline Loader for Webpack (BSD Edition)
+A modified version of [Webpack SVG Inline Loader](https://github.com/webpack-contrib/svg-inline-loader) that inlines SVG as a module.
 
 ## Installation
 
@@ -17,37 +17,45 @@ npm install svg-inline-loader --save-dev
 
 Simply add configuration object to `module.loaders` like this.
 
-```javascript
-    {
-        test: /\.svg$/,
-        loader: 'svg-inline-loader'
-    }
+```js
+{
+    test: /\.svg$/,
+    loader: 'svg-inline-loader'
+}
 ```
 
 ### Options
 
-- #### `classPrefix`: `string|null` (default: `null`)  
-  A prefix to apply to class names to avoid name collisions between SVG files.  
+#### `classPrefix`: `string|null` (default: `null`)  
+A prefix to apply to class names to avoid name collisions between SVG files.  
   
-- #### `idPrefix`: `string|null` (default: `null`)  
-  A prefix to apply to IDs to avoid name collisions between SVG files.  
+#### `idPrefix`: `string|null` (default: `null`)  
+A prefix to apply to IDs to avoid name collisions between SVG files.  
   
-- #### `removedTags`: `[...string]` (default: `[]`)  
-  An array of tags that should be removed from the resulting SVG.  
+#### `removedTags`: `[...string]` (default: `[]`)  
+An array of tags that should be removed from the resulting SVG.  
   
-- #### `removeRootSVGAttributes`: `boolean` (default: `true`)  
-  A Boolean value indicating whether the `width` and `height` attributes should be removed from the resulting `<svg>` element.  
+#### `removeRootSVGAttributes`: `boolean` (default: `true`)  
+A Boolean value indicating whether the `width` and `height` attributes should be removed from the resulting `<svg>` element.  
   
-- #### `removedAttributes`: `[...string]` (default: `[]`)  
-  An array containing the names of attributes to remove from elements found within the root `<svg>` element.  
+#### `removedAttributes`: `[...string]` (default: `[]`)  
+An array containing the names of attributes to remove from elements found within the root `<svg>` element.  
   
-- #### `warningTags`: `[...string]` (default: `[]`)  
-  An array of tags for which warnings should be output to the console, e.g., `['desc', 'defs', 'style']`.  
+#### `warningTags`: `[...string]` (default: `[]`)  
+An array of tags for which warnings should be output to the console, e.g., `['desc', 'defs', 'style']`.  
   
-- #### `warningAttributes`: `[...string]` (default: `[]`)  
-  An array containing the names of attributes to emit warnings for when encountered on children of the root `<svg>` element.  
+#### `warningAttributes`: `[...string]` (default: `[]`)  
+An array containing the names of attributes to emit warnings for when encountered on children of the root `<svg>` element.  
   
 ## Usage
+
+### Inline Loader (Overriding Configured Loaders)
+Set constant `icon` to the contents of file *icon.svg* overriding any `loaders`, `preLoaders`, and `postLoaders` specified in the webpack configuration.
+```js
+const icon = require("!svg-inline-loader!./icon.svg")
+console.log(icon)
+// Prints: "<svg> ... </svg>"
+```
 
 ### Default Hashed Prefix
 ```js
