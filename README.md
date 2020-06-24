@@ -1,8 +1,9 @@
-<div align="center">
-  <a href="https://github.com/webpack/webpack">
-    <img width="200" height="200" vspace="" hspace="25" src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon.svg">
-  </a>
-</div>
+<a href="https://github.com/webpack/webpack">
+    <img src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon.svg" 
+	     alt="Webpack icon" 
+	     width="200" 
+	     height="200">
+</a>
 
 # SVG Inline Loader for Webpack (BSD Edition)
 A modified version of [Webpack SVG Inline Loader](https://github.com/webpack-contrib/svg-inline-loader) that inlines SVG as a module.
@@ -20,7 +21,20 @@ Simply add configuration object to `module.loaders` like this.
 ```js
 {
     test: /\.svg$/,
-    loader: 'svg-inline-loader'
+    loader: "svg-inline-loader"
+}
+```
+
+or
+
+```js
+{
+    test: /\.svg$/,
+    loader: "svg-inline-loader",
+    options: {
+        classPrefix: "icon-",
+        removedTags: ["style"]
+    }
 }
 ```
 
@@ -49,7 +63,28 @@ An array containing the names of attributes to emit warnings for when encountere
   
 ## Usage
 
-### Inline Loader (Overriding Configured Loaders)
+### Configured
+
+#### Simple
+Set up inline SVG loading using default configuration.
+
+**webpack.config.js**
+```js
+{
+    test: /\.svg$/,
+    loader: "svg-inline-loader"
+}
+```
+
+**path/to/some/file.js**
+```js
+// Set `icon` to contents of "path/to/some/icon.svg"
+const icon = require("./icon.svg")
+```
+
+### Inline
+
+#### Override Configured Loaders
 Set constant `icon` to the contents of file *icon.svg* overriding any `loaders`, `preLoaders`, and `postLoaders` specified in the webpack configuration.
 ```js
 const icon = require("!svg-inline-loader!./icon.svg")
@@ -57,44 +92,35 @@ console.log(icon)
 // Prints: "<svg> ... </svg>"
 ```
 
-### Default Hashed Prefix
+#### Default Hashed Prefix
 ```js
 // Using default hashed prefix (__[hash:base64:7]__)
 var logoTwo = require('svg-inline-loader?classPrefix!./logo_two.svg');
 ```
-### Custom Class Prefix
+#### Custom Class Prefix
 ```js
 // Using custom string
 var logoOne = require('svg-inline-loader?classPrefix=my-prefix-!./logo_one.svg');
 ```
 
-### Custom Class Prefix and Hash
+#### Custom Class Prefix and Hash
 ```js
 // Using custom string and hash
 var logoThree = require('svg-inline-loader?classPrefix=__prefix-[sha512:hash:hex:5]__!./logo_three.svg');
 ```
 
+---
+
 See [loader-utils](https://github.com/webpack/loader-utils#interpolatename) for hash options.
 
 Preferred usage is via a `module.loaders`:
 ```js
-    {
-        test: /\.svg$/,
-        loader: 'svg-inline-loader?classPrefix'
-    }
+{
+    test: /\.svg$/,
+    loader: "svg-inline-loader",
+	options: {
+		classPrefix: "",
+		warningAttributes: ["style", "name"]
+	}
+}
 ```
-
-[npm]: https://img.shields.io/npm/v/svg-inline-loader.svg
-[npm-url]: https://npmjs.com/package/svg-inline-loader
-
-[deps]: https://david-dm.org/webpack-contrib/svg-inline-loader.svg
-[deps-url]: https://david-dm.org/webpack-contrib/svg-inline-loader
-
-[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
-[chat-url]: https://gitter.im/webpack/webpack
-
-[test]: https://travis-ci.org/webpack-contrib/svg-inline-loader.svg?branch=master
-[test-url]: https://travis-ci.org/webpack-contrib/svg-inline-loader
-
-[cover]: https://codecov.io/gh/webpack-contrib/svg-inline-loader/branch/master/graph/badge.svg
-[cover-url]: https://codecov.io/gh/webpack-contrib/svg-inline-loader

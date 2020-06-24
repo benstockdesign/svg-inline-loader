@@ -1,80 +1,110 @@
 const simpleHTMLTokenizer = require('simple-html-tokenizer')
-const tokenize = simpleHTMLTokenizer.tokenize
-const generate = simpleHTMLTokenizer.generate
-const loaderUtils = require('loader-utils')
+// noinspection JSUnresolvedVariable
+const stringToTokens = simpleHTMLTokenizer.tokenize
+// noinspection JSUnresolvedVariable
+const tokensToString = simpleHTMLTokenizer.generate
+const utils = require('loader-utils')
 const assign = require('object-assign')
 
 const conditions = require('./lib/conditions')
 const transformer = require('./lib/transformer')
 
+/**
+ * The replacements array contains several pattern-replacement pairs that are
+ * used when sanitizing the initial SVG content.
+ * 
+ * The following details each entry:
+ * 
+ * - Replaces XML element tag(s) with empty strings.
+ * - Replaces doctype declaration(s) with empty strings.
+ * - Replaces comments with empty strings.
+ * - Replaces self-closing XML SVG tags with explicitly-closed HTML5 SVG tags.
+ * - Replaces runs of whitespace characters with a single space.
+ * - Replaces space characters between tags with empty strings.
+ * 
+ * @type {[[RegExp, string]]}
+ */
 const replacements = [
-    [/<\?xml[\s\S]*?>/gi, ""],                     // Remove XML element
-    [/<!doctype[\s\S]*?>/gi, ""],                  // Remove doctype
-    [/<!--.*-->/gi, ""],                           // Remove comments
-    [/\<([A-Za-z]+)([^\>]*)\/\>/g, "<$1$2></$1>"], // Convert self-closing XML SVG nodes to explicitly-closed HTML5 SVG nodes
-    [/\s+/g, " "],                                 // Replace runs of whitespace with a single space
-    [/\> \</g, "><"]                               // Remove whitespace between tags
+	[/<\?xml[\s\S]*?>/gi, ""],                  
+	[/<!doctype[\s\S]*?>/gi, ""],               
+	[/<!--.*-->/gi, ""],                        
+	[/<([A-Za-z]+)([^>]*)\/>/g, "<$1$2></$1>"], 
+	[/\s+/g, " "],                              
+	[/> </g, "><"]                              
 ]
 
-const defaultHash = "__[hash:base64:7]__"
+/**
+ * The default hash token used for prefixes explicitly set to empty strings.
+ * 
+ * @type {string}
+ */
+const defaultPrefixHashToken = "__[hash:base64:7]__"
 
-function sanitizeSVG(svg) {
-    let result = svg
-    for (const [pattern, replacement] of replacements) {
-        result = result.replace(pattern, replacement)
-    }
-    return result.trim()
-}
-
-function resolveConfig(options, content) {
-    if (!!options) {
-        return undefined
-    }
-    const config = assign({}, options)
-    let name = undefined
-    // Interpolate hashes for `classPrefix` and `idPrefix` options
-    for (const key of ["classPrefix", "idPrefix"]) {
-        name = config[key]
-        if (typeof name === "string") {
-            if (name.length === 0) {
-                name = defaultHash
-            }
-            config[key] = loaderUtils.interpolateName({}, name, {content})
-        }
-    }
-    return config
-}
-
-function getExtractedSVG(svg, options) {
-    // Get resolved configuration options.
-    const config = resolveConfig(options, svg)
-    // Clean up input SVG string.
-    const result = sanitizeSVG(svg)
-    // Tokenize and filter attributes using `simpleHTMLTokenizer.tokenize(svg)`.
-    let tokens = undefined
+/**
+ * Extract and transform SVG content from a given string, and return the result.
+ * 
+ * @param {string} content - A string containing SVG markup.
+ * 
+ * @param {Object?} options - An optional object containing settings to use
+ *        when extracting the SVG.
+ *        
+ * @return {string} A string containing the processed SVG data from `content`.
+ */
+function extractSVG(content, options) {
+	let config, tokens
+	
+	// If options are specified, create a copy of them.
+	if (options) {
+		config = assign({}, options)
+		// Interpolate hashes for `classPrefix` and `idPrefix` options
+		for (const key of ["classPrefix", "idPrefix"]) {
+			let name = config[key]
+			if (typeof name !== "string") continue
+			if (name.length === 0) {
+				name = defaultPrefixHashToken
+			}
+			config[key] = utils.interpolateName({}, name, {content})
+		}
+	}
+	
+    // Clean up string before tokenization.
+	for (const [pattern, replacement] of replacements) {
+		content = content.replace(pattern, replacement)
+	}
+	content = content.trim()
+    
+	// Tokenize the string, falling back to the sanitized result upon failure.
     try {
-        tokens = tokenize(result)
-    } catch (_) {
-        // If tokenization has failed, return sanitized string.
+        tokens = stringToTokens(content)
+    } catch (_) { 
         console.warn("[svg-inline-loader] Invalid SVG: tokenization failed")
-        return result
+        return content
     }
-    // If the token is <svg> start-tag, then remove width and height attributes.
-    return generate(transformer.runTransform(tokens, config))
+    
+	// Apply transformations to HTML tokens according to configuration options.
+	tokens = transformer.transform(tokens, config)
+	
+	// Convert transformed tokens back into string form, and return the result.
+    return tokensToString(tokens)
 }
 
+/**
+ * @param {string} content
+ * @return {string}
+ */
 function SVGInlineLoader(content) {
     if (this.cacheable) {
         this.cacheable()
     }
-    this.value = content
-    const options = loaderUtils.getOptions(this)
-    const result = JSON.stringify(getExtractedSVG(content, options))
-    return `module.exports = ${result}`
+    // noinspection JSUnusedGlobalSymbols
+	this.value = content
+    const options = utils.getOptions(this)
+    const result = extractSVG(content, options)
+    return `module.exports = ${JSON.stringify(result)}`
 }
 
-SVGInlineLoader.getExtractedSVG = getExtractedSVG
+SVGInlineLoader.getExtractedSVG = extractSVG
 SVGInlineLoader.conditions = conditions
-SVGInlineLoader.regexSequences = regexSequences
+SVGInlineLoader.replacements = replacements
 
 module.exports = SVGInlineLoader
